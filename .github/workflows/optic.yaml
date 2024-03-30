@@ -14,7 +14,7 @@ jobs:
 
       - name: Check if is UX API
         run: |
-          yq '.openapi' https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore_2.yaml
+          yq '.openapi' openapi_petstore_2.yaml
  
       - name: Install Optic
         run: npm install --location global @useoptic/optic
