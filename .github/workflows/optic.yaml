@@ -1,0 +1,19 @@
+name: optic
+on:
+  pull_request:
+  push:
+    branches:
+      - "main"
+ 
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+ 
+      - name: Install Optic
+        run: npm install --location global @useoptic/optic
+ 
+      - name: Optic diff
+        run: optic diff https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore_2.yaml
