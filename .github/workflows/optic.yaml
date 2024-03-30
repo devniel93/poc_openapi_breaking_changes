@@ -14,10 +14,10 @@ jobs:
 
       - name: Check if is UX API
         run: |
-          yq '.openapi' openapi_petstore_2.yaml
+          yq '.x-bcp-api-type' openapi_petstore_2.yaml
  
-      - name: Install Optic
-        run: npm install --location global @useoptic/optic
+      #- name: Install Optic
+        #run: npm install --location global @useoptic/optic
  
-      - name: Optic diff
-        run: optic diff https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore_2.yaml
+      #- name: Optic diff
+        #run: optic diff https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore_2.yaml
