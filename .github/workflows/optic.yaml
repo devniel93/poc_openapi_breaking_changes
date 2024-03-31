@@ -21,8 +21,8 @@ jobs:
           apitype2=`yq '.x-bcp-api-type' openapi_petstore_2.yaml`
           if [ $apitype2 == 'UX' ]; then
             echo "This API is UX. It's will start to validate if this change is a fix..."
-            curl -fsSL https://github.com/pb33f/openapi-changes/releases/download/v0.0.61/openapi-changes_0.0.61_linux_x86_64.tar.gz | sh
-            openapi-changes report openapi_petstore.yaml openapi_petstore_2.yaml
+            curl -fsSL 'https://github.com/pb33f/openapi-changes/releases/download/v0.0.61/openapi-changes_0.0.61_linux_x86_64.tar.gz' | sh
+            
           else
             echo "This API is not UX. It's not allowed push to DEVELOP. API Governance requires review the API."
           fi
