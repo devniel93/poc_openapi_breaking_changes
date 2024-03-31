@@ -26,7 +26,7 @@ jobs:
           if [ ${{ steps.step2.outputs.apitype }} == 'UX' ]; then
             echo "It's an API UX. It's will start to validate if this change is a fix..."
             npm install --location global @useoptic/optic
-            optic diff https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore_2.yaml
+            optic diff openapi_petstore.yaml openapi_petstore_2.yaml
           else
             echo "It's not allowed push to DEVELOP. API Governance requires review the API"
           fi
