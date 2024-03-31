@@ -27,8 +27,9 @@ jobs:
               echo "3. The tag ${TAG} exists. Validating if this is a FIX..."
               npm i -g @pb33f/openapi-changes
               result=`openapi-changes report --no-color api/openapi_petstore.yaml api/openapi_petstore_2.yaml`
-              result2=`jq '.reportSummary.paths.totalChanges' jsonfile.json`
-              echo result2 $result2
+              result2=`jq '.reportSummary.paths.totalChanges' $result`
+              echo "4. Total changes in paths: $result2"
+
             else
               echo "3. Tag tag ${TAG} doesn't exist. So this is a new API UX, then API Governance requires review it."
               
