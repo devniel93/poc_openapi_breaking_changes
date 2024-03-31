@@ -19,13 +19,14 @@ jobs:
         id: step3
         run: |
           set $apitype2=`yq '.x-bcp-api-type' openapi_petstore_2.yaml`
+          echo "apitype2: $apitype2"
           if [ $apitype2 == 'UX' ]; then
-            echo "It's an API UX. It's will start to validate if this change is a fix..."
+            echo "This API is UX. It's will start to validate if this change is a fix..."
             npm install --location global @useoptic/optic
             echo "OPTIC_TELEMETRY_LEVEL=off" >> $GITHUB_ENV
             optic diff openapi_petstore.yaml openapi_petstore_2.yaml
           else
-            echo "It's not allowed push to DEVELOP. API Governance requires review the API"
+            echo "This API is not UX. It's not allowed push to DEVELOP. API Governance requires review the API."
           fi
 
       #- name: Install Optic
