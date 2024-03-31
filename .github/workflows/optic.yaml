@@ -18,7 +18,7 @@ jobs:
       - name: Validate if is API UX
         id: step3
         run: |
-          $apitype2=`yq '.x-bcp-api-type' openapi_petstore_2.yaml`
+          set $apitype2=`yq '.x-bcp-api-type' openapi_petstore_2.yaml`
           if [ $apitype2 == 'UX' ]; then
             echo "It's an API UX. It's will start to validate if this change is a fix..."
             npm install --location global @useoptic/optic
