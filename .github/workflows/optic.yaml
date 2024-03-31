@@ -14,16 +14,12 @@ jobs:
       - name: Checkout repository
         id: step1
         uses: actions/checkout@v3
-
-      - name: Get API type
-        id: step2
-        run: |
-          echo "apitype=`yq '.x-bcp-api-type' openapi_petstore_2.yaml`" >> "$GITHUB_OUTPUT"
       
       - name: Validate if is API UX
         id: step3
         run: |
-          if [ ${{ steps.step2.outputs.apitype }} == 'UX' ]; then
+          $apitype2=`yq '.x-bcp-api-type' openapi_petstore_2.yaml
+          if [ apitype2 == 'UX' ]; then
             echo "It's an API UX. It's will start to validate if this change is a fix..."
             npm install --location global @useoptic/optic
             echo "OPTIC_TELEMETRY_LEVEL=off" >> $GITHUB_ENV
