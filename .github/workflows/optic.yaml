@@ -18,7 +18,7 @@ jobs:
       - name: Set output variables
         id: step2
         run: |
-          echo "apitype=yq '.x-bcp-api-type' openapi_petstore_2.yaml" >> "$GITHUB_OUTPUT"
+          echo "apitype="yq '.x-bcp-api-type' openapi_petstore_2.yaml"" >> "$GITHUB_OUTPUT"
       
       - name: Use utput variables
         id: step3
