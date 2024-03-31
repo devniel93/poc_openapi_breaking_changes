@@ -30,6 +30,8 @@ jobs:
               echo "4. Total changes in paths: $result"
               if [ -z $result ]; then
                 echo "is NULL. Is: $result"
+              elif [ $result == 'null' ]; then
+                echo "is NULL2. Is: $result"
               else 
                 echo "is NOT NULL. Is: $result"
               fi
