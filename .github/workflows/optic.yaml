@@ -18,7 +18,7 @@ jobs:
       - name: Validate if is API UX
         id: step3
         run: |
-          set $apitype2=`yq '.x-bcp-api-type' openapi_petstore_2.yaml`
+          apitype2=`yq '.x-bcp-api-type' openapi_petstore_2.yaml`
           echo "apitype2: $apitype2"
           if [ $apitype2 == 'UX' ]; then
             echo "This API is UX. It's will start to validate if this change is a fix..."
