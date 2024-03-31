@@ -1,0 +1,76 @@
+{
+    "reportSummary": {
+      "info": {
+        "totalChanges": 3,
+        "breakingChanges": 0
+      },
+      "paths": {
+        "totalChanges": 1,
+        "breakingChanges": 0
+      }
+    },
+    "changes": [
+      {
+        "breaking": false,
+        "change": 1,
+        "changeText": "modified",
+        "context": {
+          "originalLine": 3,
+          "originalColumn": 10,
+          "newLine": 3,
+          "newColumn": 10
+        },
+        "new": "Swagger Petstore - OpenAPI 3.0",
+        "original": "Swagger Petstore - OpenAPI 3.0 CHANGED",
+        "property": "title"
+      },
+      {
+        "breaking": false,
+        "change": 1,
+        "changeText": "modified",
+        "context": {
+          "originalLine": 4,
+          "originalColumn": 16,
+          "newLine": 4,
+          "newColumn": 16
+        },
+        "new": "This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!\nYou can now help us improve the API whether it's by making changes to the definition itself or to the code.\nThat way, with time, we can improve the API in general, and expose some of the new features in OAS3. CHANGE3\n\n_If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit \u003e Load Petstore OAS 2.0` menu option!_\n\nSome useful links:\n- [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)\n- [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)",
+        "original": "This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!\nYou can now help us improve the API whether it's by making changes to the definition itself or to the code.\nThat way, with time, we can improve the API in general, and expose some of the new features in OAS3. CHANGE2\n\n_If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit \u003e Load Petstore OAS 2.0` menu option!_\n\nSome useful links:\n- [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)\n- [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)",
+        "property": "description"
+      },
+      {
+        "breaking": false,
+        "change": 1,
+        "changeText": "modified",
+        "context": {
+          "originalLine": 15,
+          "originalColumn": 12,
+          "newLine": 15,
+          "newColumn": 12
+        },
+        "new": "1.0.14",
+        "original": "1.0.11",
+        "property": "version"
+      },
+      {
+        "breaking": false,
+        "change": 3,
+        "changeText": "object_added",
+        "context": {
+          "newLine": 30,
+          "newColumn": 3
+        },
+        "new": "/pet3",
+        "original": "",
+        "property": "path"
+      }
+    ],
+    "commitDetails": {
+      "commitHash": "4aa115",
+      "message": "New: api/openapi_petstore_2.yaml, Original: api/openapi_petstore.yaml",
+      "author": "",
+      "authorEmail": "",
+      "committed": "2024-03-31T16:30:22.266456-05:00",
+      "changeReport": null
+    }
+  }
