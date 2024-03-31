@@ -8,15 +8,23 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
+    outputs:
+      step2: ${{ steps.step2.outputs.apitype }}
     steps:
       - name: Checkout
+        id: step1
         uses: actions/checkout@v3
 
       - name: Set output variables
-        id: vars
+        id: step2
         run: |
-          api_type="yq '.x-bcp-api-type' openapi_petstore_2.yaml"
- 
+          echo "apitype=hello" >> "$GITHUB_OUTPUT"
+      
+      - name: Use utput variables
+        id: step3
+        run: |
+          echo ${{ steps.step2.outputs.apitype }}
+
       #- name: Install Optic
         #run: npm install --location global @useoptic/optic
  
