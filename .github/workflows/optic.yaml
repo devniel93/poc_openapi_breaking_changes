@@ -26,9 +26,8 @@ jobs:
             if git show-ref --tags --verify "refs/tags/${TAG}"; then
               echo "3. The tag ${TAG} exists. Validating if this is a FIX..."
               npm i -g @pb33f/openapi-changes
-              result=`openapi-changes report --no-color api/openapi_petstore.yaml api/openapi_petstore_2.yaml`
-              result2=`jq '.reportSummary.paths.totalChanges' $result`
-              echo "4. Total changes in paths: $result2"
+              result=`openapi-changes report --no-color api/openapi_petstore.yaml api/openapi_petstore_2.yaml | jq '.reportSummary.paths.totalChanges'`
+              echo "4. Total changes in paths: $result"
 
             else
               echo "3. Tag tag ${TAG} doesn't exist. So this is a new API UX, then API Governance requires review it."
