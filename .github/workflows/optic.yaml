@@ -23,7 +23,11 @@ jobs:
       - name: Use utput variables
         id: step3
         run: |
-          echo ${{ steps.step2.outputs.apitype }}
+          if [ ${{ steps.step2.outputs.apitype }} == 'UX' ]; then
+            echo "Se iniciara validacion si es un FIX..."
+          else
+            echo "It's not allowed push to DEVELOP. API Governance requires review the API"
+          fi
 
       #- name: Install Optic
         #run: npm install --location global @useoptic/optic
