@@ -15,16 +15,18 @@ jobs:
         id: step1
         uses: actions/checkout@v3
 
-      - name: Get api type
+      - name: Get API type
         id: step2
         run: |
           echo "apitype=`yq '.x-bcp-api-type' openapi_petstore_2.yaml`" >> "$GITHUB_OUTPUT"
       
-      - name: Use utput variables
+      - name: Validate if is API UX
         id: step3
         run: |
           if [ ${{ steps.step2.outputs.apitype }} == 'UX' ]; then
-            echo "Se iniciara validacion si es un FIX..."
+            echo "It's an API UX. It's will start to validate if this change is a fix..."
+            npm install --location global @useoptic/optic
+            optic diff https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore_2.yaml
           else
             echo "It's not allowed push to DEVELOP. API Governance requires review the API"
           fi
