@@ -12,13 +12,22 @@ jobs:
       - name: Checkout repository
         id: step1
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       
       - name: Validate if is fix
         id: step2
         run: |
+          echo "1. Validating if this API is UX..."
           apitype=`yq '.x-bcp-api-type' api/openapi_petstore_2.yaml`
           if [ $apitype == 'UX' ]; then
-            echo "This API is UX. It's will start to validate if this change is a fix..."
+            echo "2. This API is UX. Validating if this repo of API has a tag v1.0.0 (if not is a new API)..."
+            TAG="v1.0.0"
+            if git show-ref --tags --verify "refs/tags/${TAG}"; then
+              echo "2. This tag ${TAG} exists. So this is a new API UX, then API Governance requires review the API."
+            else
+              echo "Tag ${TAG} does not exist"
+            fi
             npm i -g @pb33f/openapi-changes
             openapi-changes report api/openapi_petstore.yaml api/openapi_petstore_2.yaml
           else
