@@ -21,7 +21,7 @@ jobs:
           apitype2=`yq '.x-bcp-api-type' openapi_petstore_2.yaml`
           if [ $apitype2 == 'UX' ]; then
             echo "This API is UX. It's will start to validate if this change is a fix..."
-            go install github.com/tufin/oasdiff@latest
+            npm install openapi-diff --save-dev
             echo "OASDIFF_NO_TELEMETRY=1" >> $GITHUB_ENV
             oasdiff diff openapi_petstore.yaml openapi_petstore_2.yaml
           else
