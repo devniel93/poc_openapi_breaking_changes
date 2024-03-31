@@ -16,11 +16,11 @@ jobs:
       - name: Validate if is fix
         id: step2
         run: |
-          apitype=`yq '.x-bcp-api-type' /api/openapi_petstore_2.yaml`
+          apitype=`yq '.x-bcp-api-type' api/openapi_petstore_2.yaml`
           if [ $apitype == 'UX' ]; then
             echo "This API is UX. It's will start to validate if this change is a fix..."
             npm i -g @pb33f/openapi-changes
-            openapi-changes report /api/openapi_petstore.yaml /api/openapi_petstore_2.yaml
+            openapi-changes report api/openapi_petstore.yaml api/openapi_petstore_2.yaml
           else
             echo "This API is not UX. It's not allowed push to DEVELOP. API Governance requires review the API."
           fi
