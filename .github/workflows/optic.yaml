@@ -18,7 +18,7 @@ jobs:
       - name: Validate if is fix
         id: step2
         run: |
-          echo "1. Validating if this API is UX..."
+          echo "1. Validating if this API is UX...."
           apitype=`yq '.x-bcp-api-type' api/openapi_petstore_2.yaml`
           if [ $apitype == 'UX' ]; then
             echo "2. This API is UX. Validating if this repo of API has a tag v1.0.0 (if not is a new API)..."
