@@ -16,7 +16,7 @@ info:
 externalDocs:
   url: http://swagger.io
 x-bcp-api-id: petstore
-x-bcp-api-type: UX
+x-bcp-api-type: BS
 servers:
   - url: https://petstore3.swagger.io/api/v3/CHANGE3
 tags:

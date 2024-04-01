@@ -3,7 +3,7 @@ on:
   #pull_request:
   push:
     branches:
-      - "main"
+      - "develop"
  
 jobs:
   run:
@@ -41,6 +41,8 @@ jobs:
             
           else
             echo "2. This API is not UX. It's not allowed push to DEVELOP. API Governance requires review the API."
+            git reset HEAD~1
+            git push --force
           fi
 
       #- name: Install Optic
