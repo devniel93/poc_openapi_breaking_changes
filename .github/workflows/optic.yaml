@@ -3,7 +3,7 @@ on:
   #pull_request:
   push:
     branches:
-      - "develop"
+      - "fix/*"
  
 jobs:
   run:
@@ -31,6 +31,7 @@ jobs:
               echo "4. Total changes in paths: $result . "
               if [ -z $result -o $result == 'null' ]; then
                 echo "is NULL. Is: $result"
+                # GOBIERNO REVISA. STOP . GIT REVERT HEAD..
               else 
                 echo "There is no changes in paths. So this is "
               fi
