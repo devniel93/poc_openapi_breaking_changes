@@ -30,10 +30,9 @@ jobs:
               result=`openapi-changes report --no-color api/openapi_petstore.yaml api/openapi_petstore_2.yaml | jq '.reportSummary.paths.totalChanges'`
               echo "4. Total changes in paths: $result . "
               if [ -z $result -o $result == 'null' ]; then
-                echo "is NULL. Is: $result"
-                # GOBIERNO REVISA. STOP . GIT REVERT HEAD..
+                echo "There is changes in paths. So, this is a FIX. Validating"
               else 
-                echo "There is no changes in paths. So this is "
+                echo "There is no changes in paths. So, this is NOT a FIX, then API Governance requires review it." 
               fi
 
             else
@@ -43,6 +42,7 @@ jobs:
             
           else
             echo "2. This API is not UX. It's not allowed push to DEVELOP. API Governance requires review the API."
+<<<<<<< HEAD:bkp_workflow_api_fix.yaml
             git reset HEAD~1
             git push --force
           fi
@@ -52,3 +52,6 @@ jobs:
  
       #- name: Optic diff
         #run: optic diff https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore_2.yaml
+=======
+          fi
+>>>>>>> main:.github/workflows/optic.yaml
