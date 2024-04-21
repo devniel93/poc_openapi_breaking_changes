@@ -595,7 +595,8 @@ paths:
           description: The name that needs to be deleted
           required: true
           schema:
-            type: number
+            type: string
+            maxLength: 50
       responses:
         '400':
           description: Invalid username supplied
