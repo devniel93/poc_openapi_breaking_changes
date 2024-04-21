@@ -19,6 +19,7 @@ jobs:
           echo "1. Validando si es nueva API."
 
           resu=`git ls-remote origin --quiet v\*`
+          echo $resu
           if [ -z $resu -o $resu == 'null' ]; then
             echo "no existen tags, por tanto este es nueva api"
             echo "exit"
@@ -28,14 +29,6 @@ jobs:
             echo "existen tags, por tanto este es una actualizacion"
             
             echo "2. Validando si es fix design..."
-
-            npm i -g @pb33f/openapi-changes
-            result=`openapi-changes report --no-color api/openapi_petstore.yaml api/openapi_petstore_2.yaml | jq '.reportSummary.paths.totalChanges'`
-            if [ -z $result -o $result == 'null' ]; then
-              echo "ES NULO"
-            else 
-              echo "NO ES NULO"
-            fi
             
           fi
           
