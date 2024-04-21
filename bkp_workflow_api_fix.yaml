@@ -1,9 +1,9 @@
-name: optic
+name: workflow_api_fix
 on:
   #pull_request:
   push:
     branches:
-      - "fix/*"
+      - "main"
  
 jobs:
   run:

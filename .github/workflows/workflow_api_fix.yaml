@@ -1,0 +1,44 @@
+name: workflow_api_fix
+on:
+  #pull_request:
+  push:
+    branches:
+      - "main"
+ 
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        id: step1
+        uses: actions/checkout@v4
+      
+      - name: Validate if is fix
+        id: step2
+        run: |
+          echo "1. Validando si es nueva API..."
+
+          if git ls-remote --tags; then
+            echo "existen tags, por tanto este es una actualizacion"
+            
+            echo "2. Validando si es fix design..."
+            
+            npm i -g @pb33f/openapi-changes
+            result=`openapi-changes report --no-color api/openapi_petstore.yaml api/openapi_petstore_2.yaml | jq '.reportSummary.paths.totalChanges'`
+            if [ -z $result -o $result == 'null' ]; then
+              echo "ES NULO"
+            else 
+              echo "NO ES NULO"
+            fi
+
+          else
+            echo "no existen tags, por tanto este es nueva api"
+            echo "exit"
+          fi
+          
+
+      #- name: Install Optic
+        #run: npm install --location global @useoptic/optic
+ 
+      #- name: Optic diff
+        #run: optic diff https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/openapi_petstore_2.yaml

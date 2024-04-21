@@ -596,6 +596,7 @@ paths:
           required: true
           schema:
             type: string
+            maxLength: 50
       responses:
         '400':
           description: Invalid username supplied
