@@ -18,7 +18,13 @@ jobs:
         run: |
           echo "1. Validando si es nueva API."
 
-          if git ls-remote origin --quiet v\*; then
+          res1 = `git ls-remote origin --quiet v\*;`
+          if [ -z $res1 -o $res1 == 'null' ]; then
+            echo "no existen tags, por tanto este es nueva api"
+            echo "exit"
+
+          else
+
             echo "existen tags, por tanto este es una actualizacion"
             
             echo "2. Validando si es fix design..."
@@ -30,10 +36,7 @@ jobs:
             else 
               echo "NO ES NULO"
             fi
-
-          else
-            echo "no existen tags, por tanto este es nueva api"
-            echo "exit"
+            
           fi
           
 
