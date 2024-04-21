@@ -18,8 +18,8 @@ jobs:
         run: |
           echo "1. Validando si es nueva API."
 
-          res1 = `git ls-remote origin --quiet v\*`
-          if [ -z $res1 -o $res1 == 'null' ]; then
+          resu=`git ls-remote origin --quiet v\*`
+          if [ -z $resu -o $resu == 'null' ]; then
             echo "no existen tags, por tanto este es nueva api"
             echo "exit"
 
