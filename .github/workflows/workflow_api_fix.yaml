@@ -18,7 +18,7 @@ jobs:
         run: |
           echo "1. Validando si es nueva API..."
 
-          if git ls-remote --tags origin; then
+          if git ls-remote origin --quiet v\*; then
             echo "existen tags, por tanto este es una actualizacion"
             
             echo "2. Validando si es fix design..."
