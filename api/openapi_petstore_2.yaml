@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Swagger Petstore - OpenAPI 3.0
+  title: Swagger Petstore - OpenAPI 3.0 CHANGE
   description: |-
     This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
     Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
@@ -19,11 +19,13 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.11
+x-bcp-api-id: petstore2
+x-bcp-api-type: UX
 externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
 servers:
-  - url: https://petstore3.swagger.io/api/v3
+  - url: https://petstore3.swagger.io/api/v3CHANGE
 tags:
   - name: pet
     description: Everything about your Pets
@@ -192,7 +194,7 @@ paths:
         - petstore_auth:
             - write:pets
             - read:pets
-  /pet/{petId}:
+  /pet2/{petId}:
     get:
       tags:
         - pet
