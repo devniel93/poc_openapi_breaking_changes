@@ -38,9 +38,11 @@ jobs:
 
             validJson=`echo $jsonReport | jq -r '.message'`
             echo "validJson1: $validJson"
-
-            if [[ $validJson = 'No changes*' ]]; then
+            prefix="No changes"
+            if [[ $string == "$prefix"* ]]; then
               echo "No existen cambios"
+            else
+              echo "Existen cambios..."
             fi
 
             echo "2.0 validando si hay cambios en paths o endpoints"
