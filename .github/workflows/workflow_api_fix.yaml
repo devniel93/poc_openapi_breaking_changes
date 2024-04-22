@@ -30,7 +30,10 @@ jobs:
             echo "2. Validando si es FIX DESIGN..."
             npm i -g @pb33f/openapi-changes
 
-            jsonReport=`openapi-changes report --no-color api/openapi_petstore.yaml api/openapi_petstore_2.yaml`
+            gitRepoName=`basename `git rev-parse --show-toplevel``
+            echo "git repo name: $gitRepoName"
+
+            jsonReport=`openapi-changes report --no-color api/poc_openapi_breaking_changes.yaml api/openapi_petstore_2.yaml`
 
             echo "2.0 validando si hay cambios en paths o endpoints"
             validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
