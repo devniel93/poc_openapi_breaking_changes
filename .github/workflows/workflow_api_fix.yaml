@@ -32,7 +32,7 @@ jobs:
 
             gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
 
-            jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml api/openapi_petstore_2.yaml`
+            jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/api/openapi_petstore.yaml`
             validJson=`echo $jsonReport | jq -r '.message'`
             prefix="No changes"
             if [[ $validJson == "$prefix"* ]]; then
