@@ -48,6 +48,7 @@ jobs:
                 echo "No hay cambios en paths o endpoints."
 
                 echo "2.1 validando si hay cambios en title"
+                echo "json: $jsonReport"
                 validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="title")'`
                 echo "validfixx:$validFix"
                 if [[ -z "${validFix// /}" ]] | [ $validFix == 'null' ] ; then
