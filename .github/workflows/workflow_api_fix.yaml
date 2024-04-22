@@ -31,6 +31,7 @@ jobs:
             npm i -g @pb33f/openapi-changes
 
             gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
+            echo "gitRepo: $gitRepoName"
 
             jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/api/openapi_petstore.yaml`
             validJson=`echo $jsonReport | jq -r '.message'`
