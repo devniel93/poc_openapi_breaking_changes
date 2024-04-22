@@ -33,13 +33,13 @@ jobs:
             jsonReport=`openapi-changes report --no-color api/openapi_petstore.yaml api/openapi_petstore_2.yaml` 
 
             echo "2.1 validando si hay cambios en title"
-            validFix=`jq  -r '.changes.[] | select(.property=="title")' jsonReport`
+            validFix=`jq  -r '.changes.[] | select(.property=="title")' $jsonReport`
             if [ -z $result -o $result == 'null' ]; then
               echo "No hay cambios en title."
             else 
               echo "Hay cambios en title"
             fi
-            
+
           fi
           
 
