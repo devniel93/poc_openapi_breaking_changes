@@ -31,60 +31,61 @@ jobs:
             npm i -g @pb33f/openapi-changes
 
             gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
-            echo "git repo name: $gitRepoName"
 
             jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml api/openapi_petstore_2.yaml`
             validJson=`echo $jsonReport | jq -r '.message'`
             prefix="No changes"
             if [[ $validJson == "$prefix"* ]]; then
               echo "No existen cambios"
+
             else
               echo "Existen cambios..."
-            fi
 
-            echo "2.0 validando si hay cambios en paths o endpoints"
-            validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
-            if [[ -z "${validFix// /}" ]]; then
-              echo "No hay cambios en paths o endpoints."
-
-              echo "2.1 validando si hay cambios en title"
-              validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="title")'`
+              echo "2.0 validando si hay cambios en paths o endpoints"
+              validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
               if [[ -z "${validFix// /}" ]]; then
-                echo "No hay cambios en title."
-                
-                echo "2.2 validando si hay cambios en servers"
-                validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="servers")'`
+                echo "No hay cambios en paths o endpoints."
+
+                echo "2.1 validando si hay cambios en title"
+                validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="title")'`
                 if [[ -z "${validFix// /}" ]]; then
-                  echo "No hay cambios en servers."
-
-                  echo "2.3 validando si hay cambios en x-bcp-api-id"
-                  validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="x-bcp-api-id")'`
+                  echo "No hay cambios en title."
+                  
+                  echo "2.2 validando si hay cambios en servers"
+                  validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="servers")'`
                   if [[ -z "${validFix// /}" ]]; then
-                    echo "No hay cambios en x-bcp-api-id."
+                    echo "No hay cambios en servers."
 
-                    echo "2.4 validando si hay cambios en x-bcp-api-type"
-                    validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="x-bcp-api-type")'`
+                    echo "2.3 validando si hay cambios en x-bcp-api-id"
+                    validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="x-bcp-api-id")'`
                     if [[ -z "${validFix// /}" ]]; then
-                      echo "No hay cambios en x-bcp-api-type."
+                      echo "No hay cambios en x-bcp-api-id."
+
+                      echo "2.4 validando si hay cambios en x-bcp-api-type"
+                      validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="x-bcp-api-type")'`
+                      if [[ -z "${validFix// /}" ]]; then
+                        echo "No hay cambios en x-bcp-api-type."
+
+                      else
+                        echo "Hay cambios en x-bcp-api-type"
+                      fi
 
                     else
-                      echo "Hay cambios en x-bcp-api-type"
+                      echo "Hay cambios en x-bcp-api-id"
                     fi
 
                   else
-                    echo "Hay cambios en x-bcp-api-id"
+                    echo "Hay cambios en servers"
                   fi
 
-                else
-                  echo "Hay cambios en servers"
+                else 
+                  echo "Hay cambios en title"
                 fi
 
-              else 
-                echo "Hay cambios en title"
+              else
+                echo "Hay cambios en paths o endpoints"
               fi
-
-            else
-              echo "Hay cambios en paths o endpoints"
+              
             fi
-            
+
           fi
