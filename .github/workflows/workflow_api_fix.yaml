@@ -39,8 +39,8 @@ jobs:
             validJson=`echo $jsonReport | jq -r '.message'`
             echo "validJson1: $validJson"
 
-            if [[ -z "${validJson// /}" -o $validJson == 'No changes found between specifications']]; then
-
+            if [ $validJson == 'No changes found between specifications']; then
+              echo "No existen cambios"
             fi
 
             echo "2.0 validando si hay cambios en paths o endpoints"
