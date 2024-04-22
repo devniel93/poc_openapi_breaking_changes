@@ -39,7 +39,7 @@ jobs:
             validJson=`echo $jsonReport | jq -r '.message'`
             echo "validJson1: $validJson"
 
-            if [ $validJson == 'No changes found between specifications' ]; then
+            if [[ $validJson = 'No changes*' ]] then
               echo "No existen cambios"
             fi
 
