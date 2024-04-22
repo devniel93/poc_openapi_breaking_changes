@@ -34,10 +34,7 @@ jobs:
             echo "git repo name: $gitRepoName"
 
             jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml api/openapi_petstore_2.yaml`
-            echo "jsonReporte: $jsonReport"
-
             validJson=`echo $jsonReport | jq -r '.message'`
-            echo "validJson1: $validJson"
             prefix="No changes"
             if [[ $validJson == "$prefix"* ]]; then
               echo "No existen cambios"
