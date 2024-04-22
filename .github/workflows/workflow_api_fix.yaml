@@ -36,7 +36,7 @@ jobs:
             validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="title")'`
 
             echo "validFixx: $validFix"
-            if [ -z $result -o $result == 'null' ]; then
+            if [ -z $validFix -o $validFix == 'null' ]; then
               echo "No hay cambios en title."
             else 
               echo "Hay cambios en title"
