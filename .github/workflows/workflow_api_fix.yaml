@@ -30,7 +30,7 @@ jobs:
             echo "2. Validando si es FIX DESIGN..."
             npm i -g @pb33f/openapi-changes
 
-            gitRepoName=`basename `git rev-parse --show-toplevel``
+            gitRepoName=`basename ``git rev-parse --show-toplevel```
             echo "git repo name: $gitRepoName"
 
             jsonReport=`openapi-changes report --no-color api/poc_openapi_breaking_changes.yaml api/openapi_petstore_2.yaml`
