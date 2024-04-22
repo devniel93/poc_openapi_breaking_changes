@@ -39,7 +39,7 @@ jobs:
             validJson=`echo $jsonReport | jq -r '.message'`
             echo "validJson1: $validJson"
             prefix="No changes"
-            if [[ $string == "$prefix"* ]]; then
+            if [[ $validJson == "$prefix"* ]]; then
               echo "No existen cambios"
             else
               echo "Existen cambios..."
