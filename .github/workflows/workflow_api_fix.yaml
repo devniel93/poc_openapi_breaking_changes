@@ -34,6 +34,7 @@ jobs:
             echo "git repo name: $gitRepoName"
 
             jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml api/openapi_petstore_2.yaml`
+            echo "jsonReporte: $jsonReport"
 
             echo "2.0 validando si hay cambios en paths o endpoints"
             validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
