@@ -40,7 +40,7 @@ tags:
   - name: user
     description: Operations about user
 paths:
-  /pet:
+  /pet2:
     put:
       tags:
         - pet
