@@ -43,9 +43,9 @@ jobs:
               echo "Existen cambios..."
 
               echo "2.0 validando si hay cambios en paths o endpoints"
-              validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
+              validFix=`cat $jsonReport | jq -r '.reportSummary.paths'`
               
-              if [ -z "$validFix" ] then
+              if [ -z "$validFix" ]; then
                 echo "No hay cambios en paths o endpoints."
 
                 echo "2.1 validando si hay cambios en title"
