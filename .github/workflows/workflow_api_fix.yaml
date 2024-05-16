@@ -33,6 +33,7 @@ jobs:
         id: get_repo_name
         run: |
           gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
+          echo "get_repo_name gitRepoName:$gitRepoName"
           echo `::set-output name=GIT_REPO_NAME::$gitRepoName`
           
 
@@ -40,5 +41,6 @@ jobs:
         id: validate_for_changes
         run: |
           gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
+          echo "validate_for_changes gitRepoName:$gitRepoName"
           jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/api/$gitRepoName.yaml`
           echo $jsonReport
