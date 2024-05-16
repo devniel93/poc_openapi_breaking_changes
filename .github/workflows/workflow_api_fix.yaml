@@ -10,93 +10,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        id: step1
+        id: checkout_repository
         uses: actions/checkout@v4
-      
-      - name: Validate if is fix
-        id: step2
+
+      - name: Validar si es nueva API
+        id: new_api
         run: |
           echo "1. Validando si es nueva API."
-
           resu=`git ls-remote origin --quiet v\*`
-          
           if [[ -z "${resu// /}" ]]; then
-            echo "no existen tags, por tanto este es nueva api"
-            echo "exit"
-
-          else
-            echo "existen tags, por tanto este es una actualizacion"
-            
-            echo "2. Validando si es FIX DESIGN..."
-            curl -fsSL https://raw.githubusercontent.com/devniel93/my-openapi-changes/main/install.sh | sh
-
-            gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
-
-            jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/api/$gitRepoName.yaml`
-            
-            validJson=`echo $jsonReport | jq -r '.message'`
-            prefix="No changes"
-            if [[ $validJson == "$prefix"* ]]; then
-              echo "No existen cambios"
-
-            else
-              echo "Existen cambios..."
-
-              echo "2.0 validando si hay cambios en paths o endpoints"
-              validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
-              echo "2.0: $validFix"
-              
-              if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-                echo "No hay cambios en paths o endpoints."
-
-                echo "2.1 validando si hay cambios en title"
-                validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="title")'`
-                echo "2.1: $validFix"
-
-                if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-                  echo "No hay cambios en title."
-                  
-                  echo "2.2 validando si hay cambios en servers"
-                  validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="servers")'`
-                  echo "2.2: $validFix"
-
-                  if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-                    echo "No hay cambios en servers."
-
-                    echo "2.3 validando si hay cambios en x-bcp-api-id"
-                    validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="x-bcp-api-id")'`
-                    echo "2.3: $validFix"
-
-                    if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-                      echo "No hay cambios en x-bcp-api-id."
-
-                      echo "2.4 validando si hay cambios en x-bcp-api-type"
-                      validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="x-bcp-api-type")'`
-                      echo "2.4: $validFix"
-
-                      if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-                        echo "No hay cambios en x-bcp-api-type."
-
-                      else
-                        echo "Hay cambios en x-bcp-api-type"
-                      fi
-
-                    else
-                      echo "Hay cambios en x-bcp-api-id"
-                    fi
-
-                  else
-                    echo "Hay cambios en servers"
-                  fi
-
-                else 
-                  echo "Hay cambios en title"
-                fi
-
-              else
-                echo "Hay cambios en paths o endpoints"
-              fi
-              
-            fi
-
+            echo "TRUE"
+          else 
+            echo "FALSE"
           fi
+
+      - name: Instalar lib my-openapi-changes
+        id: install_openapi_changes
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/devniel93/my-openapi-changes/main/install.sh | sh
+
+      - name: Obtener nombre de repo
+        id: get_repo_name
+        run: |
+          gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
+          echo '::set-output name=GIT_REPO_NAME::$gitRepoName'
+          
+
+      - name: Validar si existen cambios
+        id: validate_for_changes
+        run: |
+          gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
+          jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/api/$gitRepoName.yaml`
+          echo $jsonReport
