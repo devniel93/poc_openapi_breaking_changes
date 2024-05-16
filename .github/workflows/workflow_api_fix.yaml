@@ -54,7 +54,7 @@ jobs:
 
       - name: Validar si hay cambios en endpoints
         id: validate_changes_endpoints
-        if: ${{ steps.validate_for_changes.outputs.VALIDATE_FOR_CHANGES == "TRUE" }}
+        if: ${{ steps.validate_for_changes.outputs.VALIDATE_FOR_CHANGES == TRUE }}
         run: |
           echo "2.0 validando si hay cambios en paths o endpoints"
           validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
