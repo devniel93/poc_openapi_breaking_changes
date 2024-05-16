@@ -34,7 +34,7 @@ jobs:
         run: |
           gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
           echo "get_repo_name gitRepoName:$gitRepoName"
-          echo `::set-output name=GIT_REPO_NAME::$gitRepoName`
+          echo "::set-output name=GIT_REPO_NAME::$gitRepoName"
           
 
       - name: Validar si existen cambios
