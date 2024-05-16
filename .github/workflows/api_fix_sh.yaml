@@ -1,9 +1,9 @@
-name: workflow_api_fix
+name: aoi_fix_sh
 on:
   #pull_request:
   push:
     branches:
-      - "bugfix/*"
+      - "main/*"
  
 jobs:
   run:

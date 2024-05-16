@@ -3,7 +3,7 @@ on:
   #pull_request:
   push:
     branches:
-      - "main/*"
+      - "bugfix/*"
  
 jobs:
   run:
@@ -28,7 +28,7 @@ jobs:
             echo "existen tags, por tanto este es una actualizacion"
             
             echo "2. Validando si es FIX DESIGN..."
-            npm i -g @pb33f/openapi-changes
+            curl -fsSL https://raw.githubusercontent.com/devniel93/my-openapi-changes/main/install.sh | sh
 
             gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
 
