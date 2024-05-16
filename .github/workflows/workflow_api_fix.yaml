@@ -33,7 +33,7 @@ jobs:
         id: get_repo_name
         run: |
           gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
-          echo "::set-output name=GIT_REPO_NAME::$gitRepoName"
+          echo "GIT_REPO_NAME=$gitRepoName" >> $GITHUB_OUTPUT
 
       - name: Validar si existen cambios
         id: validate_for_changes
@@ -50,7 +50,7 @@ jobs:
           else
             result="TRUE"
           fi
-          echo "::set-output name=VALIDATE_FOR_CHANGES::$result"
+          echo "VALIDATE_FOR_CHANGES=$result" >> $GITHUB_OUTPUT
 
       - name: Validar si hay cambios en endpoints
         id: validate_changes_endpoints
