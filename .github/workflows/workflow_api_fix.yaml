@@ -41,10 +41,26 @@ jobs:
           gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
           jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/api/$gitRepoName.yaml`
           echo $jsonReport
-          
+
           validJson=`echo $jsonReport | jq -r '.message'`
           prefix="No changes"
+          result=""
           if [[ $validJson == "$prefix"* ]]; then
+            result="FALSE"
+          else
+            result="TRUE"
+          fi
+          echo "::set-output name=VALIDATE_FOR_CHANGES::$result"
+
+      - name: Validar si hay cambios en endpoints
+        id: validate_changes_endpoints
+        if: ${{ steps.validate_for_changes.outputs.VALIDATE_FOR_CHANGES == "TRUE" }}
+        run: |
+          echo "2.0 validando si hay cambios en paths o endpoints"
+          validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
+          echo "2.0: $validFix"
+          
+          if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
             echo "FALSE"
           else
             echo "TRUE"
