@@ -58,6 +58,8 @@ jobs:
             if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
               echo "No hay cambios en paths o endpoints."
 
+              echo "REPORTE: $jsonReport"
+
               IFS=',' read -r -a elementos <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
               for elemento in "${elementos[@]}"; do
                   echo "$elemento"
