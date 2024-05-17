@@ -64,11 +64,13 @@ jobs:
             result="TRUE"
           fi
           echo "VALIDATE_FOR_CHANGES=$result" >> $GITHUB_OUTPUT
+          echo "JSON_REPORT=$jsonReport" >> $GITHUB_OUTPUT
 
       - name: Validar si hay cambios en endpoints
         id: validate_changes_endpoints
         if: ${{ steps.validate_for_changes.outputs.VALIDATE_FOR_CHANGES == 'TRUE' }}
         run: |
+          jsonReport=${{ steps.validate_for_changes.outputs.JSON_REPORT }}
           echo "json: $jsonReport"
           echo "2.0 validando si hay cambios en paths o endpoints"
           validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
