@@ -13,19 +13,6 @@ jobs:
         id: checkout_repository
         uses: actions/checkout@v4
 
-      - name: Validar variables
-        id: valid_variables
-        run: |
-          echo "MY PROPERTY: ${{ vars.OPENAPI_CHANGES_PROPERTIES }}"
-          IFS=',' read -r -a elementos <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
-          # Recorrer cada elemento del array
-          for elemento in "${elementos[@]}"; do
-              echo "$elemento"
-              echo "2.1 validando si hay cambios en $elemento"
-              validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="$elemento")'`
-              echo "2.1: $validFix"
-          done
-
       - name: Validar si es nueva API
         id: new_api
         run: |
@@ -59,55 +46,36 @@ jobs:
           prefix="No changes"
           result=""
           if [[ $validJson == "$prefix"* ]]; then
-            result="FALSE"
+            echo "No existen cambios"
+            echo "exit"
           else
-            result="TRUE"
-          fi
-          echo "VALIDATE_FOR_CHANGES=$result" >> $GITHUB_OUTPUT
+            echo "Existen cambios..."
 
-      - name: Validar si hay cambios en endpoints
-        id: validate_changes_endpoints
-        if: ${{ steps.validate_for_changes.outputs.VALIDATE_FOR_CHANGES == 'TRUE' }}
-        run: |
-          echo "json: $jsonReport"
-          echo "2.0 validando si hay cambios en paths o endpoints"
-          validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
-          echo "2.0: $validFix"
-          
-          if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-            result="FALSE"
-          else
-            result="TRUE"
-          fi
-          echo "result1: $result"
-          echo "VALIDATE_CHANGES_ENDPOINTS=$result" >> $GITHUB_OUTPUT
+            echo "2.0 validando si hay cambios en paths o endpoints"
+            validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
+            echo "2.0: $validFix"
+            
+            if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
+              echo "No hay cambios en paths o endpoints."
 
-      - name: Validar si hay cambios en title
-        id: validate_title
-        if: ${{ steps.validate_changes_endpoints.outputs.VALIDATE_CHANGES_ENDPOINTS == 'FALSE' }}
-        run: |
-          echo "2.1 validando si hay cambios en title"
-          validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="title")'`
-          echo "2.1: $validFix"
-          if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-            result="FALSE"
-          else
-            result="TRUE"
-          fi
-          echo "result2: $result"
-          echo "VALIDATE_TITLE=$result" >> $GITHUB_OUTPUT
+              IFS=',' read -r -a elementos <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
+              for elemento in "${elementos[@]}"; do
+                  echo "$elemento"
+                  echo "2.1 validando si hay cambios en $elemento"
+                  validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="$elemento")'`
+                  echo "2.1: $validFix"
+                  if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
+                     echo "No hay cambios en $elemento"
+                  else
+                    echo "Hay cambios en $elemento"
+                    echo "exit" 
+                  fi
 
-      - name: Validar si hay cambios en servers
-        id: validate_servers
-        if: ${{ steps.validate_title.outputs.VALIDATE_TITLE == 'FALSE' }}
-        run: |
-          echo "2.1 validando si hay cambios en servers"
-          validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="servers")'`
-          echo "2.1: $validFix"
-          if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-            result="FALSE"
-          else
-            result="TRUE"
+              done
+              
+            else
+              echo "Hay cambios en paths o endpoints."
+              echo "exit"
+            fi
+
           fi
-          echo "result3: $result"
-          echo "VALIDATE_SERVERS=$result" >> $GITHUB_OUTPUT
