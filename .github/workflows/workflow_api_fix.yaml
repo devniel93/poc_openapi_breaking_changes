@@ -16,7 +16,7 @@ jobs:
       - name: Variables
         id: valid_variables
         run: |
-          echo {{ env.OPENAPI_CHANGES_PROPERTIES }}
+          echo {{ vars.OPENAPI_CHANGES_PROPERTIES }}
 
       - name: Validar si es nueva API
         id: new_api
