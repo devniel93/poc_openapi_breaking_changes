@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: Swagger Petstore - OpenAPI 3.0
+  title: Swagger Petstore - OpenAPI 3.0 test
   description: |-
-    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
+    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about test
     Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
     You can now help us improve the API whether it's by making changes to the definition itself or to the code.
     That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
@@ -14,25 +14,25 @@ info:
     - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
   termsOfService: http://swagger.io/terms/
   contact:
-    email: apiteam@swagger.io 
+    email: apiteam@swagger.io.tests
   license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    name: Apache 2.0 test
+    url: http://www.apache.org/licenses/LICENSE-2.0.html/test
   version: 1.0.11
-x-bcp-api-id: petstore
-x-bcp-api-type: BS
+x-bcp-api-id: petstore2
+x-bcp-api-type: BS2
 externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
 servers:
-  - url: https://petstore3.swagger.io/api/v3
+  - url: https://petstore3.swagger.io/api/v3.test
 tags:
-  - name: pet
+  - name: pet2
     description: Everything about your Pets
     externalDocs:
       description: Find out more
       url: http://swagger.io
-  - name: store
+  - name: store2
     description: Access to Petstore orders
     externalDocs:
       description: Find out more about our store
@@ -40,7 +40,7 @@ tags:
   - name: user
     description: Operations about user
 paths:
-  /pet:
+  /pet2:
     put:
       tags:
         - pet
@@ -287,7 +287,7 @@ paths:
             - write:pets
             - read:pets
   /pet/{petId}/uploadImage:
-    post:
+    patch:
       tags:
         - pet
       summary: uploads an image
@@ -609,7 +609,7 @@ components:
     Order:
       type: object
       properties:
-        id:
+        id2:
           type: integer
           format: int64
           example: 10
