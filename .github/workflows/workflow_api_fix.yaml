@@ -78,6 +78,7 @@ jobs:
           else
             result="TRUE"
           fi
+          echo "result2: $result"
           echo "VALIDATE_CHANGES_ENDPOINTS=$result" >> $GITHUB_OUTPUT
 
       - name: Validar si hay cambios en title
