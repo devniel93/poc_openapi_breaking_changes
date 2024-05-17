@@ -64,7 +64,7 @@ jobs:
               for elemento in "${elementos[@]}"; do
                   echo "$elemento"
                   echo "2.1 validando si hay cambios en $elemento"
-                  validFix=`echo $jsonReport | jq -r '.changes[] | select(.property==''$elemento'')'`
+                  validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="'$elemento'")'`
                   echo "2.1: $validFix"
                   if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
                      echo "No hay cambios en $elemento"
