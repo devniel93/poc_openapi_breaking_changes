@@ -17,6 +17,11 @@ jobs:
         id: valid_variables
         run: |
           echo "MY PROPERTY: ${{ vars.OPENAPI_CHANGES_PROPERTIES }}"
+          IFS=',' read -r -a elementos <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
+          # Recorrer cada elemento del array
+          for elemento in "${elementos[@]}"; do
+              echo "$elemento"
+          done
 
       - name: Validar si es nueva API
         id: new_api
