@@ -13,7 +13,7 @@ jobs:
         id: checkout_repository
         uses: actions/checkout@v4
 
-      - name: Variables
+      - name: Validar variables
         id: valid_variables
         run: |
           echo "MY PROPERTY: ${{ vars.OPENAPI_CHANGES_PROPERTIES }}"
@@ -21,6 +21,9 @@ jobs:
           # Recorrer cada elemento del array
           for elemento in "${elementos[@]}"; do
               echo "$elemento"
+              echo "2.1 validando si hay cambios en $elemento"
+              validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="$elemento")'`
+              echo "2.1: $validFix"
           done
 
       - name: Validar si es nueva API
@@ -71,7 +74,16 @@ jobs:
           echo "2.0: $validFix"
           
           if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-            echo "FALSE"
+            result="FALSE"
           else
-            echo "TRUE"
+            result="TRUE"
           fi
+          echo "VALIDATE_CHANGES_ENDPOINTS=$result" >> $GITHUB_OUTPUT
+
+      - name: Validar si hay cambios en title
+        id: validate_title
+        if: ${{ steps.validate_for_changes.outputs.VALIDATE_CHANGES_ENDPOINTS == 'FALSE' }}
+        run: |
+          echo "2.1 validando si hay cambios en title"
+          validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="title")'`
+          echo "2.1: $validFix"
