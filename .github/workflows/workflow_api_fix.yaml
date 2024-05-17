@@ -83,7 +83,7 @@ jobs:
 
       - name: Validar si hay cambios en title
         id: validate_title
-        if: ${{ steps.validate_for_changes.outputs.VALIDATE_CHANGES_ENDPOINTS == 'FALSE' }}
+        if: ${{ steps.validate_changes_endpoints.outputs.VALIDATE_CHANGES_ENDPOINTS == 'FALSE' }}
         run: |
           echo "2.1 validando si hay cambios en title"
           validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="title")'`
