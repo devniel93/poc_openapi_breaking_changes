@@ -78,7 +78,7 @@ jobs:
           else
             result="TRUE"
           fi
-          echo "result2: $result"
+          echo "result1: $result"
           echo "VALIDATE_CHANGES_ENDPOINTS=$result" >> $GITHUB_OUTPUT
 
       - name: Validar si hay cambios en title
@@ -88,6 +88,12 @@ jobs:
           echo "2.1 validando si hay cambios en title"
           validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="title")'`
           echo "2.1: $validFix"
+          if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
+            result="FALSE"
+          else
+            result="TRUE"
+          fi
+          echo "result2: $result"
           echo "VALIDATE_TITLE=$result" >> $GITHUB_OUTPUT
 
       - name: Validar si hay cambios en servers
