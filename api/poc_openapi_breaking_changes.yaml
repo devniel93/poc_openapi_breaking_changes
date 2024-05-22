@@ -28,7 +28,7 @@ servers:
   - url: https://petstore3.swagger.io/api/v3/testing
 tags:
   - name: pet
-    description: Everything about your Pets TEST55
+    description: Everything about your Pets TEST6
     externalDocs:
       description: Find out more
       url: http://swagger.io
