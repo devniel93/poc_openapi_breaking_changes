@@ -100,5 +100,4 @@ jobs:
           commit-message: update changelog
           title: Update Changelog
           body: Update changelog to reflect release changes
-          branch: bugfix/fix1
           base: main
