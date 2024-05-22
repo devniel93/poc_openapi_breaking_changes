@@ -95,6 +95,9 @@ jobs:
       - name: Generar PR
         id: generate_pr
         if: ${{ steps.is_fix.outputs.IS_FIX_DESIGN == 'TRUE' }}
-        run: gh pr create -B main -H bugfix/fix8 --title 'Merge bugfix/fix8 into main' --body 'Created by Github action'
+        run: |
+          gh pr create -B main -H bugfix/fix8 --title 'Merge bugfix/fix8 into main' --body 'Created by Github action'
+          gh pr merge --merge --delete-branch
+        
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
