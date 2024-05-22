@@ -95,10 +95,6 @@ jobs:
       - name: Generar PR
         id: generate_pr
         if: ${{ steps.is_fix.outputs.IS_FIX_DESIGN == 'TRUE' }}
-        uses: peter-evans/create-pull-request@v6
-        with:
-          commit-message: update changelog
-          title: Update Changelog
-          body: Update changelog to reflect release changes
-          branch: fixdesign1
-          base: main
+        run: gh pr create -B main -H bugfix/fix8 --title 'Merge bugfix/fix8 into main' --body 'Created by Github action'
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
