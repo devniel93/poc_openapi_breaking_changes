@@ -1,0 +1,25 @@
+name: aoi_fix_sh
+on:
+  #pull_request:
+  push:
+    branches:
+      - "main/*"
+ 
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        id: step1
+        uses: actions/checkout@v4
+      
+      - name: Validate if is fix
+        id: step2
+        run: |
+          echo "1. Validando si es nueva API."
+
+          curl -fsSL https://raw.githubusercontent.com/devniel93/my-openapi-changes/main/install.sh | sh
+
+          jsonReport=`openapi-changes report --no-color api/poc_openapi_breaking_changes.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/api/poc_openapi_breaking_changes.yaml`
+
+          echo "reporte: $jsonReport"

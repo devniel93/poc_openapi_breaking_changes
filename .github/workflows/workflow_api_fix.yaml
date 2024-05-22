@@ -10,82 +10,95 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        id: step1
+        id: checkout_repository
         uses: actions/checkout@v4
-      
-      - name: Validate if is fix
-        id: step2
+
+      - name: Validar si es nueva API
+        id: new_api
         run: |
           echo "1. Validando si es nueva API."
-
           resu=`git ls-remote origin --quiet v\*`
-          
+          # Si no existe ningun tag en github que empiece con v (ejm: v1.0.0)
           if [[ -z "${resu// /}" ]]; then
-            echo "no existen tags, por tanto este es nueva api"
+            result="TRUE"
+            echo "No existen tags de formato vX.Y.Z, por tanto es nueva API"
+          else 
+            result="FALSE"
+            echo "Existen tags de formato vX.Y.Z, por tanto NO es nueva API"
+          fi
+          echo "IS_NEW_API=$result" >> $GITHUB_OUTPUT
+
+      - name: Instalar lib my-openapi-changes
+        id: install_openapi_changes
+        if: ${{ steps.new_api.outputs.IS_NEW_API == 'FALSE' }}
+        run: |
+          echo "2. Si es una actualizacion de API, se instala libreria para validar tipo de actualizacion en el OpenAPI"
+          curl -fsSL https://raw.githubusercontent.com/devniel93/my-openapi-changes/main/install.sh | sh
+
+      - name: Obtener nombre de repo
+        id: get_repo_name
+        if: ${{ steps.new_api.outputs.IS_NEW_API == 'FALSE' }}
+        run: |
+          gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
+          echo "GIT_REPO_NAME=$gitRepoName" >> $GITHUB_OUTPUT
+
+      - name: Validar si es FIX
+        id: is_fix
+        if: ${{ steps.new_api.outputs.IS_NEW_API == 'FALSE' }}
+        run: |
+          gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
+          jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/api/$gitRepoName.yaml`
+          echo $jsonReport
+          echo "IS_FIX_DESIGN='FALSE'" >> $GITHUB_OUTPUT
+
+          validJson=`echo $jsonReport | jq -r '.message'`
+          prefix="No changes"
+          result=""
+          if [[ $validJson == "$prefix"* ]]; then
+            echo "No existen cambios"
             echo "exit"
-
           else
-            echo "existen tags, por tanto este es una actualizacion"
+            echo "Existen cambios..."
+
+            echo "2.0 validando si hay cambios en paths o endpoints"
+            validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
+            echo "2.0: $validFix"
             
-            echo "2. Validando si es FIX DESIGN..."
-            npm i -g @pb33f/openapi-changes
+            if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
+              echo "No hay cambios en paths o endpoints."
+            
+              IFS=',' read -r -a elementos <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
+              for elemento in "${elementos[@]}"; do
+                  echo "2.1 validando si hay cambios en $elemento"
+                  validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="'$elemento'")'`
+                  echo "2.1: $validFix"
 
-            gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
-
-            jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/api/openapi_petstore.yaml`
-            validJson=`echo $jsonReport | jq -r '.message'`
-            prefix="No changes"
-            if [[ $validJson == "$prefix"* ]]; then
-              echo "No existen cambios"
-
-            else
-              echo "Existen cambios..."
-
-              echo "2.0 validando si hay cambios en paths o endpoints"
-              validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
-              if [[ -z "${validFix// /}" ]] | [ $validFix == 'null' ] ; then
-                echo "No hay cambios en paths o endpoints."
-
-                echo "2.1 validando si hay cambios en title"
-                validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="title")'`
-                if [[ -z "${validFix// /}" ]] | [ $validFix == 'null' ] ; then
-                  echo "No hay cambios en title."
-                  
-                  echo "2.2 validando si hay cambios en servers"
-                  validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="servers")'`
-                  if [[ -z "${validFix// /}" ]] | [ $validFix == 'null' ] ; then
-                    echo "No hay cambios en servers."
-
-                    echo "2.3 validando si hay cambios en x-bcp-api-id"
-                    validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="x-bcp-api-id")'`
-                    if [[ -z "${validFix// /}" ]] | [ $validFix == 'null' ] ; then
-                      echo "No hay cambios en x-bcp-api-id."
-
-                      echo "2.4 validando si hay cambios en x-bcp-api-type"
-                      validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="x-bcp-api-type")'`
-                      if [[ -z "${validFix// /}" ]] | [ $validFix == 'null' ] ; then
-                        echo "No hay cambios en x-bcp-api-type."
-
-                      else
-                        echo "Hay cambios en x-bcp-api-type"
-                      fi
-
-                    else
-                      echo "Hay cambios en x-bcp-api-id"
-                    fi
-
+                  if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
+                     echo "No hay cambios en $elemento"
+                     result="TRUE"
                   else
-                    echo "Hay cambios en servers"
+                    echo "Hay cambios en $elemento"
+                    result="FALSE"
+                    break
                   fi
+                  echo "IS_FIX_DESIGN=$result" >> $GITHUB_OUTPUT
 
-                else 
-                  echo "Hay cambios en title"
-                fi
-
-              else
-                echo "Hay cambios en paths o endpoints"
-              fi
+              done
               
+            else
+              echo "Hay cambios en paths o endpoints."
+              echo "exit"
             fi
 
           fi
+
+      - name: Generar PR
+        id: generate_pr
+        if: ${{ steps.is_fix.outputs.IS_FIX_DESIGN == 'TRUE' }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: update changelog
+          title: Update Changelog
+          body: Update changelog to reflect release changes
+          branch: bugfix/fix1
+          base: main
