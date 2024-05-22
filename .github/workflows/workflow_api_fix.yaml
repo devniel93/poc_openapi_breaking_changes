@@ -18,29 +18,35 @@ jobs:
         run: |
           echo "1. Validando si es nueva API."
           resu=`git ls-remote origin --quiet v\*`
+          # Si no existe ningun tag en github que empiece con v (ejm: v1.0.0)
           if [[ -z "${resu// /}" ]]; then
-            echo "TRUE"
+            echo "IS_NEW_API='TRUE'" >> $GITHUB_OUTPUT
           else 
-            echo "FALSE"
+            echo "IS_NEW_API='FALSE'" >> $GITHUB_OUTPUT
           fi
 
       - name: Instalar lib my-openapi-changes
         id: install_openapi_changes
+        if: ${{ steps.new_api.outputs.IS_NEW_API == 'FALSE' }}
         run: |
+          echo "2. Si es una actualizacion de API, se instala libreria para validar tipo de actualizacion en el OpenAPI"
           curl -fsSL https://raw.githubusercontent.com/devniel93/my-openapi-changes/main/install.sh | sh
 
       - name: Obtener nombre de repo
         id: get_repo_name
+        if: ${{ steps.new_api.outputs.IS_NEW_API == 'FALSE' }}
         run: |
           gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
           echo "GIT_REPO_NAME=$gitRepoName" >> $GITHUB_OUTPUT
 
-      - name: Validar si existen cambios
-        id: validate_for_changes
+      - name: Validar si es FIX
+        id: is_fix
+        if: ${{ steps.new_api.outputs.IS_NEW_API == 'FALSE' }}
         run: |
           gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
           jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/poc_openapi_breaking_changes/main/api/$gitRepoName.yaml`
           echo $jsonReport
+          echo "IS_FIX_DESIGN='FALSE'" >> $GITHUB_OUTPUT
 
           validJson=`echo $jsonReport | jq -r '.message'`
           prefix="No changes"
@@ -60,14 +66,17 @@ jobs:
             
               IFS=',' read -r -a elementos <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
               for elemento in "${elementos[@]}"; do
-                  echo "$elemento"
                   echo "2.1 validando si hay cambios en $elemento"
                   validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="'$elemento'")'`
                   echo "2.1: $validFix"
+
                   if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
                      echo "No hay cambios en $elemento"
+                     echo "IS_FIX_DESIGN='TRUE'" >> $GITHUB_OUTPUT
+
                   else
                     echo "Hay cambios en $elemento"
+                    echo "IS_FIX_DESIGN='FALSE'" >> $GITHUB_OUTPUT
                     break
                   fi
 
@@ -79,3 +88,12 @@ jobs:
             fi
 
           fi
+
+      - name: Generar PR
+        id: generate_pr
+        if: ${{ steps.is_fix.outputs.IS_FIX_DESIGN == 'TRUE' }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: update changelog
+          title: Update Changelog
+          body: Update changelog to reflect release changes
