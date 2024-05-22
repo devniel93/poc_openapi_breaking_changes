@@ -97,7 +97,7 @@ jobs:
         if: ${{ steps.is_fix.outputs.IS_FIX_DESIGN == 'TRUE' }}
         run: |
           gh pr create --title 'Merge testing' --body 'Created by Github action'
-          gh pr merge --merge
+          gh pr merge --merge --delete-branch
         
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
