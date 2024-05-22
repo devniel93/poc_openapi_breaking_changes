@@ -21,8 +21,10 @@ jobs:
           # Si no existe ningun tag en github que empiece con v (ejm: v1.0.0)
           if [[ -z "${resu// /}" ]]; then
             echo "IS_NEW_API='TRUE'" >> $GITHUB_OUTPUT
+            echo "No existen tags de formato vX.Y.Z, por tanto es nueva API"
           else 
             echo "IS_NEW_API='FALSE'" >> $GITHUB_OUTPUT
+            echo "Existen tags de formato vX.Y.Z, por tanto NO es nueva API"
           fi
 
       - name: Instalar lib my-openapi-changes
