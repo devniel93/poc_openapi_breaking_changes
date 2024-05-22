@@ -75,13 +75,13 @@ jobs:
 
                   if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
                      echo "No hay cambios en $elemento"
-                     echo "IS_FIX_DESIGN='TRUE'" >> $GITHUB_OUTPUT
-
+                     result="TRUE"
                   else
                     echo "Hay cambios en $elemento"
-                    echo "IS_FIX_DESIGN='FALSE'" >> $GITHUB_OUTPUT
+                    result="FALSE"
                     break
                   fi
+                  echo "IS_FIX_DESIGN=$result" >> $GITHUB_OUTPUT
 
               done
               
