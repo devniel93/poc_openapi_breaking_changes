@@ -69,24 +69,39 @@ jobs:
           else
             echo "Existen cambios..."
 
-            echo "2.0 validando si hay cambios en paths o endpoints"
+            echo "2.0 validando si hay cambios en paths..."
             validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
-            echo "2.0: $validFix"
             
-            if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-              echo "No hay cambios en paths o endpoints."
+            IFS=',' read -r -a changes_summary <<< ${{ vars.OPENAPI_CHANGES_SUMARY }}
+            for change_summary in "${changes_summary[@]}"; do
+                echo "2.1 validando si hay cambios en $change_summary"
+                validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="'$change_summary'")'`
+                echo "2.1: $validFix"
+
+                if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
+                    echo "No hay cambios en $change_summary"
+                    result1="FALSE"
+                else
+                  echo "Hay cambios en $change_summary"
+                  result1="TRUE"
+                  break
+                fi
+            done
             
-              IFS=',' read -r -a elementos <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
-              for elemento in "${elementos[@]}"; do
-                  echo "2.1 validando si hay cambios en $elemento"
-                  validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="'$elemento'")'`
+            if [[ result1 == 'FALSE' ]] ; then
+              echo "No hay cambios en paths."
+            
+              IFS=',' read -r -a changes_properties <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
+              for change in "${changes_properties[@]}"; do
+                  echo "2.1 validando si hay cambios en $change"
+                  validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="'$change'")'`
                   echo "2.1: $validFix"
 
                   if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-                     echo "No hay cambios en $elemento"
+                     echo "No hay cambios en $change"
                      result="TRUE"
                   else
-                    echo "Hay cambios en $elemento"
+                    echo "Hay cambios en $change"
                     result="FALSE"
                     break
                   fi
@@ -95,7 +110,7 @@ jobs:
               done
               
             else
-              echo "Hay cambios en paths o endpoints."
+              echo "Hay cambios en properties generales"
             fi
 
           fi
