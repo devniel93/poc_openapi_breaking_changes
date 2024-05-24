@@ -69,9 +69,7 @@ jobs:
           else
             echo "Existen cambios..."
 
-            echo "2.0 validando si hay cambios en paths..."
-            validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
-            
+            echo "2.0 validando si hay cambios en generales..."
             IFS=',' read -r -a changes_summary <<< ${{ vars.OPENAPI_CHANGES_SUMARY }}
             for change_summary in "${changes_summary[@]}"; do
                 echo "2.1 validando si hay cambios en $change_summary"
