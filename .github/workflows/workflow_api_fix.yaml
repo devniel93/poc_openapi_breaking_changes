@@ -13,19 +13,26 @@ jobs:
         id: checkout_repository
         uses: actions/checkout@v4
 
+      - name: Obtener ultimo tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get_latest_tag
+        with:
+          semver_only: true
+
+      - name: Validar tag
+        uses: actions-ecosystem/action-regex-match@v2
+        id: regex_match
+        if: ${{ steps.get_latest_tag.outcome == 'success' }}
+        with:
+          text: ${{ steps.get_latest_tag.outputs.tag }}
+          regex: '^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$'
+
       - name: Validar si es nueva API
         id: new_api
+        if: ${{ steps.regex_match.outputs.match != '' }}
         run: |
           echo "1. Validando si es nueva API."
-          resu=`git ls-remote origin --quiet v\*`
-          # Si no existe ningun tag en github que empiece con v (ejm: v1.0.0)
-          if [[ -z "${resu// /}" ]]; then
-            result="TRUE"
-            echo "No existen tags de formato vX.Y.Z, por tanto es nueva API"
-          else 
-            result="FALSE"
-            echo "Existen tags de formato vX.Y.Z, por tanto NO es nueva API"
-          fi
+          result="FALSE"
           echo "IS_NEW_API=$result" >> $GITHUB_OUTPUT
 
       - name: Instalar lib my-openapi-changes
@@ -101,17 +108,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Obtener ultimo tag
-        uses: actions-ecosystem/action-get-latest-tag@v1
-        id: get_latest_tag
-        if: ${{ steps.generate_pr.outcome == 'success' }}
-        with:
-          semver_only: true
-
       - name: Obtener nueva version
         uses: actions-ecosystem/action-bump-semver@v1
         id: get_new_version
-        if: ${{ steps.get_latest_tag.outcome == 'success' }}
+        if: ${{ steps.generate_pr.outcome == 'success' }}
         with:
           current_version: ${{ steps.get_latest_tag.outputs.tag }}
           level: 'patch'
