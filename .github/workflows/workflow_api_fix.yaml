@@ -18,7 +18,7 @@ jobs:
         run: |
           last_msg_commit=`git log --format=%B -n 1 HEAD | head -n 1`
           echo "last msg: $last_msg_commit"
-          
+          result=""
           if [[ $last_msg_commit == "${{ vars.LAST_MSG_COMMIT }}" ]]; then
             echo "Mensaje para gatillar ejecucion de github action"
             result="TRUE""
