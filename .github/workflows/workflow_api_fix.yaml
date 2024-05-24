@@ -16,7 +16,7 @@ jobs:
       - name: Validar ultimo mensaje commit
         id: validate_last_msg_commit
         run: |
-          last_msg_commit=`git log --format=%B -n 1 HEAD | head -n 1
+          last_msg_commit=`git log --format=%B -n 1 HEAD | head -n 1`
           echo "last msg: $last_msg_commit"
           
           if [[ $last_msg_commit == 'execute-fix-design' ]]; then
