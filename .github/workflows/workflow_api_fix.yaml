@@ -102,20 +102,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions-ecosystem/action-get-latest-tag@v1
+      - name: Obtener ultimo tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
         id: get_latest_tag
         if: ${{ steps.generate_pr.outcome == 'success' }}
         with:
           semver_only: true
 
-      - uses: actions-ecosystem/action-bump-semver@v1
+      - name: Obtener nueva version
+        uses: actions-ecosystem/action-bump-semver@v1
         id: get_new_version
         if: ${{ steps.get_latest_tag.outcome == 'success' }}
         with:
           current_version: ${{ steps.get_latest_tag.outputs.tag }}
-          level: 'minor'
+          level: 'patch'
       
-      - uses: actions-ecosystem/action-push-tag@v1
+      - name: Generar TAG
+        uses: actions-ecosystem/action-push-tag@v1
         id: generate_tag
         if: ${{ steps.get_new_version.outputs.new_version != null }}
         with:
