@@ -24,7 +24,7 @@ jobs:
             result="TRUE""
           else
             echo "No se ejecuta github action"
-            result="FALSE""
+            result="FALSE"
           fi
           echo "is_valid=$result" >> $GITHUB_OUTPUT
 
