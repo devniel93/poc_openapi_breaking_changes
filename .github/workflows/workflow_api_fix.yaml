@@ -97,7 +97,27 @@ jobs:
         if: ${{ steps.is_fix.outputs.IS_FIX_DESIGN == 'TRUE' }}
         run: |
           gh pr create --title 'Merge testing' --body 'Created by Github action'
-          gh pr merge --merge --delete-branch
-        
+          gh pr merge --merge
+          # se elimina el branch automaticamente despues del pr merge. Esto por la configuracion en github de eliminar autom branch head
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get_latest_tag
+        if: ${{ steps.generate_pr.outcome == 'success' }}
+        with:
+          semver_only: true
+
+      - uses: actions-ecosystem/action-bump-semver@v1
+        id: get_new_version
+        if: ${{ steps.get_latest_tag.outcome == 'success' }}
+        with:
+          current_version: ${{ steps.get_latest_tag.outputs.tag }}
+          level: 'minor'
+      
+      - uses: actions-ecosystem/action-push-tag@v1
+        id: generate_tag
+        if: ${{ steps.get_new_version.outputs.new_version != null }}
+        with:
+          tag: ${{ steps.get_new_version.outputs.new_version }}
+          message: "${{ steps.get_new_version.outputs.new_version }}: PR"
