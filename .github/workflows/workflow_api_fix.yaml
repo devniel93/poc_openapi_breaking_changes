@@ -46,7 +46,6 @@ jobs:
       - name: Validar si es nueva API
         id: new_api
         if: ${{ steps.regex_match.outputs.match != '' }}
-        if: ${{ steps.regex_match.outputs.match != '' }}
         run: |
           echo "1. Validando si es nueva API."
           result="FALSE"
