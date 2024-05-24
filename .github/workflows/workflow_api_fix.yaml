@@ -73,7 +73,7 @@ jobs:
             IFS=',' read -r -a changes_summary <<< ${{ vars.OPENAPI_CHANGES_SUMARY }}
             for change_summary in "${changes_summary[@]}"; do
                 echo "2.1 validando si hay cambios en $change_summary"
-                validFix1=`echo $jsonReport | jq -r '.reportSummary."$change_summary"'`
+                validFix1=`echo $jsonReport | jq -r ".reportSummary.$change_summary"`
                 echo "2.1: $validFix1"
 
                 if [[ -z "${validFix1// /}" ]] || [[ $validFix1 == 'null' ]] ; then
