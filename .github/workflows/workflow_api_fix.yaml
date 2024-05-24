@@ -21,10 +21,8 @@ jobs:
           
           if [[ $last_msg_commit == 'execute-fix-design' ]]; then
             echo "Mensaje para gatillar ejecucion de github action"
-            result="TRUE""
           else
             echo "No se ejecuta github action"
-            result="FALSE"
           fi
 
       - name: Obtener ultimo tag
