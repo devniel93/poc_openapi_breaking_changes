@@ -52,8 +52,8 @@ jobs:
           echo "IS_FIX_DESIGN='FALSE'" >> $GITHUB_OUTPUT
 
           validJson=`echo $jsonReport | jq -r '.message'`
-          prefix="No changes"
-          result=""
+          prefix=${{ vars.MSG_RESULT_PREFIX }}
+          
           if [[ $validJson == "$prefix"* ]]; then
             echo "No existen cambios"
             echo "exit"
