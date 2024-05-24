@@ -8,7 +8,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Descargar repositorio git
         id: checkout_repository
         uses: actions/checkout@v4
 
