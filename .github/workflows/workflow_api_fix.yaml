@@ -28,11 +28,28 @@ jobs:
           text: ${{ steps.get_latest_tag.outputs.tag }}
           regex: '^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$'
 
+      - name: Obtener ultimo tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get_latest_tag
+        with:
+          semver_only: true
+          initial_version: false
+
+      - name: Validar tag
+        uses: actions-ecosystem/action-regex-match@v2
+        id: regex_match
+        if: ${{ steps.get_latest_tag.outputs.tag != '' }}
+        with:
+          text: ${{ steps.get_latest_tag.outputs.tag }}
+          regex: '^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$'
+
       - name: Validar si es nueva API
         id: new_api
         if: ${{ steps.regex_match.outputs.match != '' }}
+        if: ${{ steps.regex_match.outputs.match != '' }}
         run: |
           echo "1. Validando si es nueva API."
+          result="FALSE"
           result="FALSE"
           echo "IS_NEW_API=$result" >> $GITHUB_OUTPUT
 
@@ -112,6 +129,7 @@ jobs:
       - name: Obtener nueva version
         uses: actions-ecosystem/action-bump-semver@v1
         id: get_new_version
+        if: ${{ steps.generate_pr.outcome == 'success' }}
         if: ${{ steps.generate_pr.outcome == 'success' }}
         with:
           current_version: ${{ steps.get_latest_tag.outputs.tag }}
