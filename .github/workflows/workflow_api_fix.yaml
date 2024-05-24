@@ -13,9 +13,24 @@ jobs:
         id: checkout_repository
         uses: actions/checkout@v4
 
+      - name: Validar ultimo mensaje commit
+        id: validate_last_msg_commit
+        run: |
+          last_msg_commit=`git log --format=%B -n 1 HEAD | head -n 1`
+          param_msg_commit=${{ vars.LAST_MSG_COMMIT }}
+          if [[ $last_msg_commit == "$param_msg_commit" ]]; then
+            echo "Mensaje para gatillar ejecucion de github action"
+            result="TRUE""
+          else
+            echo "No se ejecuta github action"
+            result="FALSE""
+          fi
+          echo "is_valid=$result" >> $GITHUB_OUTPUT
+
       - name: Obtener ultimo tag
         uses: actions-ecosystem/action-get-latest-tag@v1
         id: get_latest_tag
+        if: ${{ steps.validate_last_msg_commit.outputs.is_valid == 'TRUE' }}
         with:
           semver_only: true
           initial_version: false
@@ -56,7 +71,6 @@ jobs:
           
           if [[ $validJson == "$prefix"* ]]; then
             echo "No existen cambios"
-            echo "exit"
           else
             echo "Existen cambios..."
 
@@ -87,7 +101,6 @@ jobs:
               
             else
               echo "Hay cambios en paths o endpoints."
-              echo "exit"
             fi
 
           fi
