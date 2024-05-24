@@ -87,8 +87,6 @@ jobs:
             done
             
             if [[ result1 == 'FALSE' ]] ; then
-              echo "No hay cambios en paths."
-            
               IFS=',' read -r -a changes_properties <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
               for change in "${changes_properties[@]}"; do
                   echo "2.1 validando si hay cambios en $change"
