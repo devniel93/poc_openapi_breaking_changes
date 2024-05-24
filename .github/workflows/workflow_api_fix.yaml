@@ -26,7 +26,6 @@ jobs:
             echo "No se ejecuta github action"
             result="FALSE"
           fi
-          echo "is_valid=$result" >> $GITHUB_OUTPUT
 
       - name: Obtener ultimo tag
         uses: actions-ecosystem/action-get-latest-tag@v1
