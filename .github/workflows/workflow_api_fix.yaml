@@ -19,7 +19,7 @@ jobs:
           last_msg_commit=`git log --format=%B -n 1 HEAD | head -n 1
           echo "last msg: $last_msg_commit"
           
-          if [[ $last_msg_commit == "execute-fix-design" ]]; then
+          if [[ $last_msg_commit == 'execute-fix-design' ]]; then
             echo "Mensaje para gatillar ejecucion de github action"
             result="TRUE""
           else
