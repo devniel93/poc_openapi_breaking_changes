@@ -73,7 +73,7 @@ jobs:
             for change in "${changes_properties[@]}"; do
                 echo "2.1 validando si hay cambios en $change"
                 validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="'$change'")'`
-                echo "2.1: $validFix"
+                echo $validFix
 
                 if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
                     echo "No hay cambios en $change"
@@ -83,9 +83,10 @@ jobs:
                   result="FALSE"
                   break
                 fi
-                echo "IS_FIX_DESIGN=$result" >> $GITHUB_OUTPUT
-
             done
+            
+            echo $result
+            echo "IS_FIX_DESIGN=$result" >> $GITHUB_OUTPUT
 
           fi
 
