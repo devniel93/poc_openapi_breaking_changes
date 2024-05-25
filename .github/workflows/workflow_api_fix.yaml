@@ -69,45 +69,23 @@ jobs:
           else
             echo "Existen cambios..."
 
-            echo "2.0 validando si hay cambios en generales..."
-            IFS=',' read -r -a changes_summary <<< ${{ vars.OPENAPI_CHANGES_SUMARY }}
-            for change_summary in "${changes_summary[@]}"; do
-                echo "2.1 validando si hay cambios en $change_summary"
-                validFix1=`echo $jsonReport | jq -r ".reportSummary.$change_summary"`
-                echo "2.1: $validFix1"
+            IFS=',' read -r -a changes_properties <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
+            for change in "${changes_properties[@]}"; do
+                echo "2.1 validando si hay cambios en $change"
+                validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="'$change'")'`
+                echo "2.1: $validFix"
 
-                if [[ -z "${validFix1// /}" ]] || [[ $validFix1 == 'null' ]] ; then
-                    echo "No hay cambios en $change_summary"
-                    result1="FALSE"
+                if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
+                    echo "No hay cambios en $change"
+                    result="TRUE"
                 else
-                  echo "Hay cambios en $change_summary"
-                  result1="TRUE"
+                  echo "Hay cambios en $change"
+                  result="FALSE"
                   break
                 fi
+                echo "IS_FIX_DESIGN=$result" >> $GITHUB_OUTPUT
+
             done
-            
-            if [[ result1 == 'FALSE' ]] ; then
-              IFS=',' read -r -a changes_properties <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
-              for change in "${changes_properties[@]}"; do
-                  echo "2.1 validando si hay cambios en $change"
-                  validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="'$change'")'`
-                  echo "2.1: $validFix"
-
-                  if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-                     echo "No hay cambios en $change"
-                     result="TRUE"
-                  else
-                    echo "Hay cambios en $change"
-                    result="FALSE"
-                    break
-                  fi
-                  echo "IS_FIX_DESIGN=$result" >> $GITHUB_OUTPUT
-
-              done
-              
-            else
-              echo "Hay cambios en properties generales"
-            fi
 
           fi
 
