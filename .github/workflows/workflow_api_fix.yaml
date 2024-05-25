@@ -60,10 +60,8 @@ jobs:
           gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
           jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/$gitRepoName/main/api/$gitRepoName.yaml`
           echo $jsonReport
-          echo "is_fix='FALSE'" >> $GITHUB_OUTPUT
-
-          validJson=`echo $jsonReport | jq -r '.message'`
           
+          validJson=`echo $jsonReport | jq -r '.message'`
           if [[ $validJson == '${{ vars.MSG_RESULT_PREFIX }}'* ]]; then
             echo "No existen cambios"
           else
@@ -71,22 +69,22 @@ jobs:
 
             IFS=',' read -r -a changes_properties <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
             for change in "${changes_properties[@]}"; do
-                echo "2.1 validando si hay cambios en $change"
-                validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="'$change'")'`
-                echo $validFix
+              echo "2.1 validando si hay cambios en $change"
+              validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="'$change'")'`
+              echo $validFix
 
-                if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-                  echo "No hay cambios en $change"
-                  result="TRUE"
-                else
-                  echo "Hay cambios en $change"
-                  result="FALSE"
-                  break
-                fi
+              if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
+                echo "No hay cambios en $change"
+                result="TRUE"
+              else
+                echo "Hay cambios en $change"
+                result="FALSE"
+                break
+              fi
             done
 
             echo "is_fix=$result" >> $GITHUB_OUTPUT
-            echo "is_fix:$result"
+            echo "is_fix: $result"
 
           fi
 
