@@ -69,34 +69,23 @@ jobs:
           else
             echo "Existen cambios..."
 
-            echo "2.0 validando si hay cambios en paths o endpoints"
-            validFix=`echo $jsonReport | jq -r '.reportSummary.paths'`
-            echo "2.0: $validFix"
-            
-            if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-              echo "No hay cambios en paths o endpoints."
-            
-              IFS=',' read -r -a elementos <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
-              for elemento in "${elementos[@]}"; do
-                  echo "2.1 validando si hay cambios en $elemento"
-                  validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="'$elemento'")'`
-                  echo "2.1: $validFix"
+            IFS=',' read -r -a changes_properties <<< ${{ vars.OPENAPI_CHANGES_PROPERTIES }}
+            for change in "${changes_properties[@]}"; do
+                echo "2.1 validando si hay cambios en $change"
+                validFix=`echo $jsonReport | jq -r '.changes[] | select(.property=="'$change'")'`
+                echo "2.1: $validFix"
 
-                  if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
-                     echo "No hay cambios en $elemento"
-                     result="TRUE"
-                  else
-                    echo "Hay cambios en $elemento"
-                    result="FALSE"
-                    break
-                  fi
-                  echo "IS_FIX_DESIGN=$result" >> $GITHUB_OUTPUT
+                if [[ -z "${validFix// /}" ]] || [[ $validFix == 'null' ]] ; then
+                    echo "No hay cambios en $change"
+                    result="TRUE"
+                else
+                  echo "Hay cambios en $change"
+                  result="FALSE"
+                  break
+                fi
+                echo "IS_FIX_DESIGN=$result" >> $GITHUB_OUTPUT
 
-              done
-              
-            else
-              echo "Hay cambios en paths o endpoints."
-            fi
+            done
 
           fi
 
