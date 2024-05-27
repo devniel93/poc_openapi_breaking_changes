@@ -151,5 +151,5 @@ jobs:
         id: generate_tag
         if: ${{ steps.get_tag_name.outputs.tag_name != null }}
         with:
-          tag: ${{ steps.get_new_version.outputs.new_version }}
-          message: ${{ steps.get_tag_name.outputs.tag_name }}
+          tag: ${{ steps.get_tag_name.outputs.tag_name }}
+          message: "${{ steps.get_tag_name.outputs.tag_name }} : PR"
