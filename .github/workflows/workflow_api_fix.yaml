@@ -23,10 +23,33 @@ jobs:
           fi
           echo "is_valid=$result" >> $GITHUB_OUTPUT
 
+      - name: Obtener tipo de API
+        id: get_api_type
+        if: ${{ steps.validate_last_msg_commit.outputs.is_valid == 'TRUE' }}
+        run: |
+          gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
+          apiType=`yq '.x-bcp-api-type' api/$gitRepoName.yaml`
+          echo "api_type=$apiType" >> $GITHUB_OUTPUT
+
+      - name: Validar tipo de API
+        id: validate_api_type
+        if: ${{ steps.get_api_type.outputs.api_type != '' }}
+        run: |
+          apiType=${{ steps.get_api_type.outputs.api_type }}
+          
+          IFS=',' read -r -a api_types <<< ${{ vars.VALID_API_TYPES }}
+          for type in "${api_types[@]}"; do
+            if [[ $apiType == '$type' ]]; then
+              result="TRUE"
+              break
+            fi
+          done
+          echo "is_valid=$result" >> $GITHUB_OUTPUT
+      
       - name: Obtener ultimo tag
         uses: actions-ecosystem/action-get-latest-tag@v1
         id: get_latest_tag
-        if: ${{ steps.validate_last_msg_commit.outputs.is_valid == 'TRUE' }}
+        if: ${{ steps.validate_api_type.outputs.is_valid == 'TRUE' }}
         with:
           semver_only: true
           initial_version: false
@@ -55,7 +78,7 @@ jobs:
 
       - name: Validar si es FIX
         id: validate_is_fix
-        if: ${{ steps.regex_match.outputs.match != '' }}
+        if: ${{ steps.get_repo_name.outputs.GIT_REPO_NAME != '' }}
         run: |
           gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
           jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/$gitRepoName/main/api/$gitRepoName.yaml`
@@ -88,7 +111,7 @@ jobs:
 
           fi
 
-      - name: Generar PR
+      - name: Generar PR y merge
         id: generate_pr
         if: ${{ steps.validate_is_fix.outputs.is_fix == 'TRUE' }}
         run: |
