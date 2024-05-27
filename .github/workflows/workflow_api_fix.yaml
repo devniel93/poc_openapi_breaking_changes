@@ -48,7 +48,7 @@ jobs:
           IFS=',' read -r -a api_types <<< ${{ vars.VALID_API_TYPES }}
           for type in "${api_types[@]}"; do
             echo $type
-            if [[ $apiType == '$type' ]]; then
+            if [[ $apiType == "$type" ]]; then
               result="TRUE"
               echo "es valido"
               break
