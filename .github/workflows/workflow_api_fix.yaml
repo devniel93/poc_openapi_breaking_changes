@@ -138,6 +138,7 @@ jobs:
           IFS=',' read -r -a snap_api_types <<< ${{ vars.SNAPSHOT_API_TYPES }}
           for type in "${snap_api_types[@]}"; do
             if [[ $apiType == "$type" ]]; then
+              echo "es snapshot"
               result="${{ steps.get_new_version.outputs.new_version }}-SNAPSHOT"
               break
             fi
