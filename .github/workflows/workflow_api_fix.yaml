@@ -119,12 +119,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Obtener solo la version del TAG
+        id: get_only_version
+        run: |
+          latest_tag=${{ steps.get_latest_tag.outputs.tag }}
+          only_version=$(echo $latest_tag | cut -d'-' -f1)
+          echo "only_version: $only_version"
+          echo "only_version=$only_version" >> $GITHUB_OUTPUT
+      
       - name: Obtener nueva version
         uses: actions-ecosystem/action-bump-semver@v1
         id: get_new_version
         if: ${{ steps.generate_pr.outcome == 'success' }}
         with:
-          current_version: ${{ steps.get_latest_tag.outputs.tag }}
+          current_version: ${{ steps.get_only_version.outputs.only_version }}
           level: 'patch'
 
       - name: Obtener nombre TAG
