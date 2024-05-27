@@ -78,7 +78,7 @@ jobs:
 
       - name: Validar si es FIX
         id: validate_is_fix
-        if: ${{ steps.get_repo_name.outputs.GIT_REPO_NAME != '' }}
+        if: ${{ steps.install_openapi_changes.outcome == 'success' }}
         run: |
           gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
           jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/$gitRepoName/main/api/$gitRepoName.yaml`
