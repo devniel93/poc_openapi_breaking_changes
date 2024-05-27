@@ -20,7 +20,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.11
 x-bcp-api-id: petstore
-x-bcp-api-type: BS
+x-bcp-api-type: UX
 externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
@@ -734,7 +734,7 @@ components:
         id:
           type: integer
           format: int64
-          example: 20
+          example: 21
         name:
           type: string
           example: doggie
