@@ -23,6 +23,13 @@ jobs:
           fi
           echo "is_valid=$result" >> $GITHUB_OUTPUT
 
+      - name: Obtener nombre de repo
+        id: get_repo_name
+        if: ${{ steps.regex_match.outputs.match != '' }}
+        run: |
+          gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
+          echo "GIT_REPO_NAME=$gitRepoName" >> $GITHUB_OUTPUT
+
       - name: Obtener tipo de API
         id: get_api_type
         if: ${{ steps.validate_last_msg_commit.outputs.is_valid == 'TRUE' }}
@@ -68,13 +75,6 @@ jobs:
         run: |
           echo "2. Si es una actualizacion de API, se instala libreria para validar tipo de actualizacion en el OpenAPI"
           curl -fsSL https://raw.githubusercontent.com/devniel93/my-openapi-changes/main/install.sh | sh
-
-      - name: Obtener nombre de repo
-        id: get_repo_name
-        if: ${{ steps.regex_match.outputs.match != '' }}
-        run: |
-          gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
-          echo "GIT_REPO_NAME=$gitRepoName" >> $GITHUB_OUTPUT
 
       - name: Validar si es FIX
         id: validate_is_fix
