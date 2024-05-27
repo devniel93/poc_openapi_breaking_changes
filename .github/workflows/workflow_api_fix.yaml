@@ -58,7 +58,6 @@ jobs:
         id: get_latest_tag
         if: ${{ steps.validate_api_type.outputs.is_valid == 'TRUE' }}
         with:
-          semver_only: true
           initial_version: false
 
       - name: Validar tag
