@@ -734,7 +734,7 @@ components:
         id:
           type: integer
           format: int64
-          example: 23
+          example: 24
         name:
           type: string
           example: doggie
