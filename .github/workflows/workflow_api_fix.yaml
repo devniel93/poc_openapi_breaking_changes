@@ -25,14 +25,14 @@ jobs:
 
       - name: Obtener nombre de repo
         id: get_repo_name
-        if: ${{ steps.regex_match.outputs.match != '' }}
+        if: ${{ steps.validate_last_msg_commit.outputs.is_valid == 'TRUE' }}
         run: |
           gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
           echo "GIT_REPO_NAME=$gitRepoName" >> $GITHUB_OUTPUT
 
       - name: Obtener tipo de API
         id: get_api_type
-        if: ${{ steps.validate_last_msg_commit.outputs.is_valid == 'TRUE' }}
+        if: ${{ steps.get_repo_name.outputs.GIT_REPO_NAME != '' }}
         run: |
           gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
           apiType=`yq '.x-bcp-api-type' api/$gitRepoName.yaml`
