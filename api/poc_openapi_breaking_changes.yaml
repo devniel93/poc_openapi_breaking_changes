@@ -732,8 +732,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
           example: 21
         name:
           type: string
