@@ -43,12 +43,17 @@ jobs:
         if: ${{ steps.get_api_type.outputs.api_type != '' }}
         run: |
           apiType=${{ steps.get_api_type.outputs.api_type }}
+          echo "apiType output: $apiType"
           
           IFS=',' read -r -a api_types <<< ${{ vars.VALID_API_TYPES }}
           for type in "${api_types[@]}"; do
+            echo $type
             if [[ '$apiType' == '$type' ]]; then
               result="TRUE"
+              echo "es valido"
               break
+            else
+              echo "no es valido"
             fi
           done
           echo "is_valid=$result" >> $GITHUB_OUTPUT
