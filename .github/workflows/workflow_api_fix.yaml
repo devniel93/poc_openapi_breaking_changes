@@ -35,8 +35,7 @@ jobs:
         if: ${{ steps.get_repo_name.outputs.GIT_REPO_NAME != '' }}
         run: |
           gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
-          apiType=`yq '.x-bcp-api-type' api/$gitRepoName.yaml`
-          echo "api_type=$apiType" >> $GITHUB_OUTPUT
+          apyType=$(echo $gitRepoName | cut -d'-' -f1)
 
       - name: Validar tipo de API
         id: validate_api_type
@@ -136,28 +135,37 @@ jobs:
           current_version: ${{ steps.get_only_version.outputs.only_version }}
           level: 'patch'
 
-      - name: Generar nombre TAG
+      - name: Generar nombres para los TAGs
         id: get_tag_name
         if: ${{ steps.get_new_version.outputs.new_version != null }}
         run: |
           apiType=${{ steps.get_api_type.outputs.api_type }}
-          result=${{ steps.get_new_version.outputs.new_version }}
-
+          
           IFS=',' read -r -a snap_api_types <<< ${{ vars.SNAPSHOT_API_TYPES }}
           for type in "${snap_api_types[@]}"; do
             if [[ $apiType == "$type" ]]; then
               echo "es snapshot"
-              result="${{ steps.get_new_version.outputs.new_version }}-SNAPSHOT"
+              tagNameSnapshot="${{ steps.get_new_version.outputs.new_version }}-SNAPSHOT"
+              echo "tag_name_snapshot=$tagNameSnapshot" >> $GITHUB_OUTPUT  
               break
             fi
           done
 
-          echo "tag_name=$result" >> $GITHUB_OUTPUT
+          tagNameRelease=${{ steps.get_new_version.outputs.new_version }}
+          echo "tag_name_release=$tagNameRelease" >> $GITHUB_OUTPUT
       
-      - name: Generar TAG
+      - name: Generar TAG SNAPSHOT
         uses: actions-ecosystem/action-push-tag@v1
-        id: generate_tag
-        if: ${{ steps.get_tag_name.outputs.tag_name != null }}
+        id: generate_tag_snapshot
+        if: ${{ steps.get_tag_name.outputs.tag_name_snapshot != null }}
         with:
-          tag: ${{ steps.get_tag_name.outputs.tag_name }}
-          message: "${{ steps.get_tag_name.outputs.tag_name }} : PR"
+          tag: ${{ steps.get_tag_name.outputs.tag_name_snapshot }}
+          message: "${{ steps.get_tag_name.outputs.tag_name_snapshot }} : PR"
+
+      - name: Generar TAG RELEASE
+        uses: actions-ecosystem/action-push-tag@v1
+        id: generate_tag_release
+        if: ${{ steps.get_tag_name.outputs.tag_name_release != null }}
+        with:
+          tag: ${{ steps.get_tag_name.outputs.tag_name_release }}
+          message: "${{ steps.get_tag_name.outputs.tag_name_release }} : PR"
