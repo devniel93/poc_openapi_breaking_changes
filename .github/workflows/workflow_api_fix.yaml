@@ -12,74 +12,16 @@ jobs:
         id: checkout_repository
         uses: actions/checkout@v4
 
-      - name: Validar ultimo mensaje commit
-        id: validate_last_msg_commit
-        run: |
-          last_msg_commit=`git log --format=%B -n 1 HEAD | head -n 1`
-          if [[ $last_msg_commit == '${{ vars.LAST_MSG_COMMIT }}' ]]; then
-            result="TRUE"
-          else
-            result="FALSE"
-          fi
-          echo "is_valid=$result" >> $GITHUB_OUTPUT
-
-      - name: Obtener nombre de repo
-        id: get_repo_name
-        if: ${{ steps.validate_last_msg_commit.outputs.is_valid == 'TRUE' }}
-        run: |
-          gitRepoName=`git ls-remote --get-url | xargs basename -s .git`
-          echo "GIT_REPO_NAME=$gitRepoName" >> $GITHUB_OUTPUT
-
-      - name: Obtener tipo de API
-        id: get_api_type
-        if: ${{ steps.get_repo_name.outputs.GIT_REPO_NAME != '' }}
-        run: |
-          gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
-          apiType=`yq '.x-bcp-api-type' api/$gitRepoName.yaml`
-          echo "api_type=$apiType" >> $GITHUB_OUTPUT
-
-      - name: Validar tipo de API
-        id: validate_api_type
-        if: ${{ steps.get_api_type.outputs.api_type != '' }}
-        run: |
-          apiType=${{ steps.get_api_type.outputs.api_type }}
-          
-          IFS=',' read -r -a api_types <<< ${{ vars.VALID_API_TYPES }}
-          for type in "${api_types[@]}"; do
-            if [[ $apiType == "$type" ]]; then
-              result="TRUE"
-              break
-            fi
-          done
-          echo "is_valid=$result" >> $GITHUB_OUTPUT
-      
-      - name: Obtener ultimo tag
-        uses: actions-ecosystem/action-get-latest-tag@v1
-        id: get_latest_tag
-        if: ${{ steps.validate_api_type.outputs.is_valid == 'TRUE' }}
-        with:
-          initial_version: false
-
-      - name: Validar tag
-        uses: actions-ecosystem/action-regex-match@v2
-        id: regex_match
-        if: ${{ steps.get_latest_tag.outputs.tag != '' }}
-        with:
-          text: ${{ steps.get_latest_tag.outputs.tag }}
-          regex: '^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(SNAPSHOT))?$'
-
       - name: Instalar lib my-openapi-changes
         id: install_openapi_changes
-        if: ${{ steps.regex_match.outputs.match != '' }}
         run: |
           echo "2. Si es una actualizacion de API, se instala libreria para validar tipo de actualizacion en el OpenAPI"
           curl -fsSL https://raw.githubusercontent.com/devniel93/my-openapi-changes/main/install.sh | sh
 
       - name: Validar si es FIX
         id: validate_is_fix
-        if: ${{ steps.install_openapi_changes.outcome == 'success' }}
         run: |
-          gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
+          gitRepoName="poc_openapi_breaking_changes"
           jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/$gitRepoName/main/api/$gitRepoName.yaml`
           echo $jsonReport
           
@@ -109,55 +51,3 @@ jobs:
             echo "is_fix: $result"
 
           fi
-
-      - name: Generar PR y merge
-        id: generate_pr
-        if: ${{ steps.validate_is_fix.outputs.is_fix == 'TRUE' }}
-        run: |
-          gh pr create --title 'Merge testing' --body 'Created by Github action'
-          gh pr merge --merge
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Obtener solo la version del TAG
-        id: get_only_version
-        if: ${{ steps.generate_pr.outcome == 'success' }}
-        run: |
-          latest_tag=${{ steps.get_latest_tag.outputs.tag }}
-          only_version=$(echo $latest_tag | cut -d'-' -f1)
-          echo "only_version: $only_version"
-          echo "only_version=$only_version" >> $GITHUB_OUTPUT
-      
-      - name: Generar nueva version
-        uses: actions-ecosystem/action-bump-semver@v1
-        id: get_new_version
-        if: ${{ steps.get_only_version.outputs.only_version != null }}
-        with:
-          current_version: ${{ steps.get_only_version.outputs.only_version }}
-          level: 'patch'
-
-      - name: Generar nombre TAG
-        id: get_tag_name
-        if: ${{ steps.get_new_version.outputs.new_version != null }}
-        run: |
-          apiType=${{ steps.get_api_type.outputs.api_type }}
-          result=${{ steps.get_new_version.outputs.new_version }}
-
-          IFS=',' read -r -a snap_api_types <<< ${{ vars.SNAPSHOT_API_TYPES }}
-          for type in "${snap_api_types[@]}"; do
-            if [[ $apiType == "$type" ]]; then
-              echo "es snapshot"
-              result="${{ steps.get_new_version.outputs.new_version }}-SNAPSHOT"
-              break
-            fi
-          done
-
-          echo "tag_name=$result" >> $GITHUB_OUTPUT
-      
-      - name: Generar TAG
-        uses: actions-ecosystem/action-push-tag@v1
-        id: generate_tag
-        if: ${{ steps.get_tag_name.outputs.tag_name != null }}
-        with:
-          tag: ${{ steps.get_tag_name.outputs.tag_name }}
-          message: "${{ steps.get_tag_name.outputs.tag_name }} : PR"
