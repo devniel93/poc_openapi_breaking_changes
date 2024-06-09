@@ -616,7 +616,7 @@ components:
         petId:
           type: integer
           format: int64
-          example: 198772
+          example: 198773
         quantity:
           type: integer
           format: int32
