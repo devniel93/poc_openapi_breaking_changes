@@ -14,14 +14,12 @@ jobs:
 
       - name: Instalar lib my-openapi-changes
         id: install_openapi_changes
-        if: ${{ steps.regex_match.outputs.match != '' }}
         run: |
           echo "2. Si es una actualizacion de API, se instala libreria para validar tipo de actualizacion en el OpenAPI"
           curl -fsSL https://raw.githubusercontent.com/devniel93/my-openapi-changes/main/install.sh | sh
 
       - name: Validar si es FIX
         id: validate_is_fix
-        if: ${{ steps.install_openapi_changes.outcome == 'success' }}
         run: |
           gitRepoName=${{ steps.get_repo_name.outputs.GIT_REPO_NAME }}
           jsonReport=`openapi-changes report --no-color api/$gitRepoName.yaml https://raw.githubusercontent.com/devniel93/$gitRepoName/main/api/$gitRepoName.yaml`
