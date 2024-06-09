@@ -690,7 +690,7 @@ components:
         id:
           type: integer
           format: int64
-          example: 10
+          example: 15
         username:
           type: string
           example: theUser
